@@ -36,6 +36,8 @@ services.AddExceptionHandler<ExceptionHandlerMiddleware>();
 services.AddApplication()
     .AddInfrastructure(configuration);
 
+services.AddHealthChecks();
+
 // if (!env.IsProduction())
 services.AddSwaggerGen(c =>
 {
@@ -78,6 +80,8 @@ async Task App()
     }
 
     app.MapControllers();
+    
+    app.MapHealthChecks("/health");
 
     app.Run();
 }

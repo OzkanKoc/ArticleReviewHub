@@ -40,6 +40,8 @@ services.AddExceptionHandler<ExceptionHandlerMiddleware>();
 services.AddApplication()
     .AddInfrastructure(configuration);
 
+services.AddHealthChecks();
+
 services.Configure<TokenOptions>(configuration.GetSection(TokenOptions.SectionName));
 
 services.AddAuthentication(x =>
@@ -129,13 +131,13 @@ async Task App()
     app.UseAuthentication();
     app.UseAuthorization();
 
-    using (var scope = app.Services.CreateAsyncScope())
-    {
-        var initializer = scope.ServiceProvider.GetRequiredService<ArticleDbContextInitializer>();
-        await initializer.Initialize();
-    }
+    using var scope = app.Services.CreateScope();
+    var initializer = scope.ServiceProvider.GetRequiredService<ArticleDbContextInitializer>();
+    await initializer.Initialize();
+    await initializer.Seed();
 
     app.MapControllers();
+    app.MapHealthChecks("/health");
 
     app.Run();
 }

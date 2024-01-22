@@ -9,9 +9,8 @@ public class ArticleConfiguration : IEntityTypeConfiguration<Article>
     public void Configure(EntityTypeBuilder<Article> builder)
     {
         builder.ToTable("Article");
-        builder.Property(x => x.Author).HasMaxLength(300);
-        builder.Property(x => x.Title).HasMaxLength(300);
-        builder.Property(x => x.ArticleContent).HasColumnType("Text");
-        builder.Property(x => x.PublishDate).HasDefaultValue(DateTime.Now);
+        builder.Property(x => x.Author).IsRequired().HasMaxLength(300);
+        builder.Property(x => x.Title).IsRequired().HasMaxLength(300);
+        builder.Property(x => x.ArticleContent).IsRequired().HasColumnType("Text");
     }
 }

@@ -40,7 +40,7 @@ internal sealed class CreateReviewCommandHandler(IRepository<Review> repository,
         var article = await articleApiClient.GetArticleById(articleId);
         if (article is null)
         {
-            throw new CustomException(ErrorType.Validation, "article.not.exist");
+            throw new CustomException(ErrorType.NotFound, "article.not.found");
         }
     }
 }

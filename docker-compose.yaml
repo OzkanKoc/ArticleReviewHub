@@ -5,21 +5,6 @@ volumes:
   review-maria-db:
 
 services:
-  article.api:
-    image: ${DOCKER_REGISTRY-}article-api
-    ports:
-      - "5000:8080"
-    build:
-      context: .
-      dockerfile: src/services/Article/Api/Dockerfile
-    depends_on:
-      article-db:
-        condition: service_started
-      redis:
-        condition: service_started
-    networks:
-      - proxy-backend
-  
   article-db:
     image: mariadb:latest
     restart: always
@@ -36,23 +21,23 @@ services:
       - article-maria-db:/var/lib/mariadb
     networks:
       - proxy-backend
-  
-  
-  review.api:
-    image: ${DOCKER_REGISTRY-}review-api
+
+
+  article-api:
+    image: ${DOCKER_REGISTRY-}article-api
+    restart: on-failure
     ports:
-      - "6000:8080"
+      - "5000:8080"
     build:
       context: .
-      dockerfile: src/services/Review/Api/Dockerfile
-    depends_on:
-      review-db:
-        condition: service_started
-      redis:
+      dockerfile: src/services/Article/Api/Dockerfile
+    depends_on: 
+      article-db:
         condition: service_started
     networks:
       - proxy-backend
-
+  
+  
   review-db:
     image: mariadb:latest
     restart: always
@@ -61,19 +46,34 @@ services:
       MARIADB_USER: powerUser
       MARIADB_PASSWORD: StrongPassword!
       MARIADB_ROOT_PASSWORD: StrongPassword!
+      MYSQL_TCP_PORT: 3307
     ports:
       - "3307:3306"
     volumes:
       - review-maria-db:/var/lib/mariadb
     networks:
       - proxy-backend
-        
+  
+  review-api:
+    image: ${DOCKER_REGISTRY-}review-api
+    restart: on-failure
+    ports:
+      - "5050:8080"
+    build:
+      context: .
+      dockerfile: src/services/Review/Api/Dockerfile
+    depends_on: 
+      review-db:
+        condition: service_started
+    networks:
+      - proxy-backend
+  
   redis:
     image: redis:latest
     restart: always
     ports:
       - '6379:6379'
-    networks: 
+    networks:
       - proxy-backend
 
 networks:

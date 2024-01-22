@@ -1,4 +1,3 @@
-using System.Net.Http.Headers;
 using Application.Common.ApiClient.Article;
 using Application.Common.Repositories;
 using EntityFramework.Exceptions.MySQL.Pomelo;
@@ -13,7 +12,6 @@ using Application.Common.Serializer;
 using Infrastructure.ApiClient.Article;
 using Infrastructure.Caching;
 using Infrastructure.Serializer;
-using Microsoft.Extensions.Options;
 
 namespace Infrastructure;
 
