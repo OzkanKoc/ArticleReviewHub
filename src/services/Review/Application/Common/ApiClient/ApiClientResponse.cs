@@ -13,7 +13,6 @@ public class ApiClientResponse
     public HttpStatusCode StatusCode => HttpResponseMessage.StatusCode;
     public bool Success => HttpResponseMessage.IsSuccessStatusCode;
     public HttpResponseMessage EnsureSuccessStatusCode() => HttpResponseMessage.EnsureSuccessStatusCode();
-    public Dictionary<string, string[]> ValidationErrors { get; set; }
 
     public async Task<string> GetContentAsync()
         => await HttpResponseMessage.Content.ReadAsStringAsync();
