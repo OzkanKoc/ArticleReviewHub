@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
 
-// [Authorize]
+[Authorize]
 [ApiController]
 [Route("api/v1/articles")]
 public class ArticleController(ISender sender) : ControllerBase
