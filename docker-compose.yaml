@@ -1,0 +1,81 @@
+version: '3.4'
+
+volumes:
+  article-maria-db:
+  review-maria-db:
+
+services:
+  article.api:
+    image: ${DOCKER_REGISTRY-}article-api
+    ports:
+      - "5000:8080"
+    build:
+      context: .
+      dockerfile: src/services/Article/Api/Dockerfile
+    depends_on:
+      article-db:
+        condition: service_started
+      redis:
+        condition: service_started
+    networks:
+      - proxy-backend
+  
+  article-db:
+    image: mariadb:latest
+    restart: always
+    environment:
+      MARIADB_DATABASE: ArticleDB
+      MARIADB_USER: powerUser
+      MARIADB_PASSWORD: StrongPassword!
+      MARIADB_ROOT_PASSWORD: StrongPassword!
+    ports:
+      - "3306:3306"
+    expose:
+      - 3306
+    volumes:
+      - article-maria-db:/var/lib/mariadb
+    networks:
+      - proxy-backend
+  
+  
+  review.api:
+    image: ${DOCKER_REGISTRY-}review-api
+    ports:
+      - "6000:8080"
+    build:
+      context: .
+      dockerfile: src/services/Review/Api/Dockerfile
+    depends_on:
+      review-db:
+        condition: service_started
+      redis:
+        condition: service_started
+    networks:
+      - proxy-backend
+
+  review-db:
+    image: mariadb:latest
+    restart: always
+    environment:
+      MARIADB_DATABASE: ReviewDB
+      MARIADB_USER: powerUser
+      MARIADB_PASSWORD: StrongPassword!
+      MARIADB_ROOT_PASSWORD: StrongPassword!
+    ports:
+      - "3307:3306"
+    volumes:
+      - review-maria-db:/var/lib/mariadb
+    networks:
+      - proxy-backend
+        
+  redis:
+    image: redis:latest
+    restart: always
+    ports:
+      - '6379:6379'
+    networks: 
+      - proxy-backend
+
+networks:
+  proxy-backend:
+    driver: bridge
