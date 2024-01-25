@@ -21,7 +21,6 @@ internal sealed class GetReviewsQueryHandler(IRepository<Review> repository, IRe
             async () =>
             {
                 var reviews = await repository.Table
-                    .AsNoTracking()
                     .ApplyODataQuery(oDataQueryProvider.ODataQuery)
                     .Select(x => new GetReviewDto(
                         x.Id,

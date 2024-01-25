@@ -21,7 +21,6 @@ internal sealed class GetArticlesQueryHandler(IRepository<Article> repository, I
             async () =>
             {
                 var articles = await repository.Table
-                    .AsNoTracking()
                     .ApplyODataQuery(oDataQueryProvider.ODataQuery)
                     .Select(x => new GetArticleDto(x.Id,
                         x.Title,

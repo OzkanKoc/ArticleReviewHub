@@ -18,20 +18,16 @@ internal sealed class GetArticleByIdQueryHandler(IRepository<Article> repository
     {
         return await cacheProvider.GetAsync(CacheKeyConstants.Article.Format(request.Id),
             CacheTime.FifteenMinutes,
-            async () =>
-            {
-                var x = await repository.Table
+            async () => await repository.Table
                             .Where(x => x.Id == request.Id)
+                            .Select(x => new GetArticleDto(
+                                x.Id,
+                                x.Title,
+                                x.Author,
+                                x.ArticleContent,
+                                x.PublishDate,
+                                x.StarCount))
                             .FirstOrDefaultAsync(cancellationToken)
-                        ?? throw new CustomException(ErrorType.NotFound);
-
-                return new GetArticleDto(
-                    x.Id,
-                    x.Title,
-                    x.Author,
-                    x.ArticleContent,
-                    x.PublishDate,
-                    x.StarCount);
-            }, cancellationToken);
+                        ?? throw new CustomException(ErrorType.NotFound), cancellationToken);
     }
 }
